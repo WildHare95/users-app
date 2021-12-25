@@ -19,8 +19,9 @@
       </span>
     </div>
     <button class="backButton" @click="backToList">Back to list users</button>
-    <div v-if="isLoaded"><Preloader/></div>
-    <div v-if="!id"> Invalid user id</div>
+    <div v-if="isLoaded">
+      <Preloader/>
+    </div>
   </div>
 </template>
 
