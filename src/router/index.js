@@ -11,7 +11,7 @@ export default new VueRouter({
             component: UsersList
         },
         {
-            path: "/user/id",
+            path: "/user/*",
             component: UserCard
         }
     ]

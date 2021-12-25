@@ -1,15 +1,15 @@
 <template>
-  <div v-if="id" class="wrapper" @click="closeCard()">
+  <div class="wrapper">
     <div v-for="item in dataUser" :key="item.id" class="card">
       <img :src=item.picture alt=""/>
       <span>
-        <div class="title">{{ item.title }} {{ item.firstName }} {{ item.lastName }}</div>
+        <div class="title">{{ item.title }}. {{ item.firstName }} {{ item.lastName }}</div>
       </span>
       <span>
         <div>Email: {{ item.email }}</div>
         <div>Phone: {{ item.phone }}</div>
         <div>Date of birthday: {{ new Date(item.dateOfBirth).toUTCString().slice(5, 16) }}</div>
-        <div>Address:
+        <div class="parentLocation">Address:
             <div class="location">
               <div>Country: {{ item.location.country }}</div>
               <div>City: {{ item.location.city }}</div>
@@ -18,7 +18,9 @@
         </div>
       </span>
     </div>
+    <button class="backButton" @click="backToList">Back to list users</button>
     <div v-if="isLoaded"><Preloader/></div>
+    <div v-if="!id"> Invalid user id</div>
   </div>
 </template>
 
@@ -29,10 +31,11 @@ import Preloader from "@/common/preloader";
 export default {
   name: "UserCard",
   components: {Preloader},
-  props: ["id", "userClick"],
+  props: ["userClick"],
   data() {
     return {
       dataUser: null,
+      id: null,
       isLoaded: true
     }
   },
@@ -42,69 +45,92 @@ export default {
           .then(response => {
             this.isLoaded = false
             return response.data
-          })]
+          }).catch(error => console.log(error))]
     },
-    closeCard() {
-      this.$emit("userClick", null)
-      this.$router.push({query: {}})
+    getUserId() {
+      return this.$router.history.current.path
+    },
+    backToList() {
+      return this.$router.push("/")
     }
   },
   mounted() {
+    this.id = this.getUserId()
     this.getUser(this.id)
-  }
+  },
 }
 </script>
 
 <style>
 .wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-  transition: opacity 0.3s ease;
-  margin: 0;
-  padding: 0;
+  text-align: center;
+  height: 100%;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
   align-items: center;
-  background: white;
-  width: 50%;
+  justify-content: space-evenly;
+  border: solid 2px #ded8d8;
   height: 50%;
+  width: 50%;
 }
 
 .title {
+  font-size: 32px;
   font-weight: bold;
-  font-size: 24px;
+
 }
 
 .location {
-  margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.parentLocation {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.backButton {
+  height: 30px;
+  border: solid 1px black;
+  opacity: 0.8;
+  margin: 5px;
+  border-radius: 3px;
+  background: #cccccc;
+}
+
+.backButton:hover {
+  background: #1aac1a;
+  transition: 0.5s;
+  border-radius: 3px;
 }
 
 @media (max-width: 321px) {
   .card {
-    width: 100%;
+    width: 80%;
   }
 }
+
 @media (max-width: 376px) {
   .card {
-    width: 100%;
+    width: 80%;
   }
 }
+
 @media (max-width: 426px) {
   .card {
-    width: 100%;
+    width: 80%;
   }
 }
+
 
 </style>
